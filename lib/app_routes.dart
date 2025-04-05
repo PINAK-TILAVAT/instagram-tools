@@ -18,4 +18,7 @@ abstract class Routes {
   static const GRID_PREVIEW = '/grid-preview';
   static const CAROUSEL_EDITOR = '/carousel-editor';
   static const CAROUSEL_PREVIEW = '/carousel-preview';
+  static const SIGN_UP = '/sign-up';
+  static const OTP_VERIFICATION = '/otp-verification';
+  static const PROFILE = '/profile';
 }

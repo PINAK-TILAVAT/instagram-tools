@@ -10,6 +10,9 @@ class StorageService extends GetxService {
   static const String _keyRemainingGridUses = 'remaining_grid_uses';
   static const String _keyRemainingCarouselUses = 'remaining_carousel_uses';
   static const String _keyFirstLaunch = 'first_launch';
+  static const String _keyUserName = 'user_name';
+  static const String _keyPhoneNumber = 'phone_number';
+  static const String _keyIsLoggedIn = 'is_logged_in';
 
   // Default values
   static const int _defaultFreeGridUses = 3;
@@ -24,6 +27,7 @@ class StorageService extends GetxService {
       await _prefs.setBool(_keyIsPremium, false);
       await _prefs.setInt(_keyRemainingGridUses, _defaultFreeGridUses);
       await _prefs.setInt(_keyRemainingCarouselUses, _defaultFreeCarouselUses);
+      await _prefs.setBool(_keyIsLoggedIn, false);
     }
 
     return this;
@@ -84,8 +88,36 @@ class StorageService extends GetxService {
     await resetCarouselUses();
   }
 
+  // Authentication methods
+  String getUserName() {
+    return _prefs.getString(_keyUserName) ?? '';
+  }
+
+  String getPhoneNumber() {
+    return _prefs.getString(_keyPhoneNumber) ?? '';
+  }
+
+  bool isLoggedIn() {
+    return _prefs.getBool(_keyIsLoggedIn) ?? false;
+  }
+
+  Future<void> setUserData(String name, String phone) async {
+    await _prefs.setString(_keyUserName, name);
+    await _prefs.setString(_keyPhoneNumber, phone);
+    await _prefs.setBool(_keyIsLoggedIn, true);
+  }
+
+  Future<void> clearUserData() async {
+    await _prefs.remove(_keyUserName);
+    await _prefs.remove(_keyPhoneNumber);
+    await _prefs.setBool(_keyIsLoggedIn, false);
+  }
+
   // Clear all data (for testing or user logout)
+  @override
   Future<void> clearAll() async {
     await _prefs.clear();
+    // Reinitialize default values after clearing
+    await init();
   }
 }

@@ -4,6 +4,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:instapro/app_constants.dart';
 import 'package:instapro/app_pages.dart';
 import 'package:instapro/app_theme.dart';
+import 'package:instapro/auth_binding.dart';
+import 'package:instapro/auth_controller.dart'; // Add this import
 import 'package:instapro/storage_service.dart';
 import 'package:instapro/theme_service.dart';
 
@@ -19,6 +21,9 @@ void main() async {
 
   // Initialize ThemeService
   Get.put(ThemeService());
+
+  // Initialize AuthController - Add this line
+  Get.put(AuthController());
 
   runApp(const InstagramToolsApp());
 }
@@ -47,6 +52,9 @@ class InstagramToolsApp extends StatelessWidget {
       // Default transition effect
       defaultTransition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
+
+      // Initial bindings
+      initialBinding: AuthBinding(),
 
       // Locale settings
       locale: Get.deviceLocale,

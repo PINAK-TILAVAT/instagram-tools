@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:instapro/app_pages.dart';
 
+import 'package:instapro/auth_controller.dart';
+
 class SplashController extends GetxController
     with GetSingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> fadeAnimation;
+
+  // Get auth controller
+  final AuthController _authController = Get.find<AuthController>();
 
   @override
   void onInit() {
@@ -24,6 +29,10 @@ class SplashController extends GetxController
   }
 
   void _navigateToHome() async {
+    // Check user auth status
+    await _authController.checkLoginStatus();
+
+    // Wait for splash animation
     await Future.delayed(
       const Duration(milliseconds: 2000),
       () => Get.offAllNamed(Routes.HOME),

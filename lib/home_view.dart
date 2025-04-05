@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:instapro/app_colors.dart';
 import 'package:instapro/app_constants.dart';
 import 'package:instapro/app_pages.dart';
+import 'package:instapro/auth_controller.dart';
 import 'package:instapro/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -15,6 +16,62 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         title: Text(AppConstants.appName),
         actions: [
+          // Authentication status
+          Obx(() {
+            final authController = Get.find<AuthController>();
+            return authController.isLoggedIn.value
+                ? PopupMenuButton<String>(
+                  icon: const Icon(Icons.account_circle),
+                  onSelected: (value) {
+                    if (value == 'logout') {
+                      // Show confirmation dialog before logout
+                      Get.defaultDialog(
+                        title: 'Logout',
+                        middleText: 'Are you sure you want to log out?',
+                        textConfirm: 'Logout',
+                        textCancel: 'Cancel',
+                        confirmTextColor: Colors.white,
+                        onConfirm: () {
+                          Get.back();
+                          authController.logout();
+                        },
+                        onCancel: () => Get.back(),
+                      );
+                    } else if (value == 'profile') {
+                      Get.toNamed(Routes.PROFILE);
+                    }
+                  },
+                  itemBuilder:
+                      (context) => [
+                        PopupMenuItem(
+                          value: 'profile',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.person, size: 20),
+                              const SizedBox(width: 8),
+                              Text('My Profile'),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'logout',
+                          child: Row(
+                            children: [
+                              Icon(Icons.logout, size: 20),
+                              SizedBox(width: 8),
+                              Text('Logout'),
+                            ],
+                          ),
+                        ),
+                      ],
+                )
+                : IconButton(
+                  icon: const Icon(Icons.login),
+                  tooltip: 'Sign Up / Login',
+                  onPressed: () => Get.toNamed(Routes.SIGN_UP),
+                );
+          }),
+
           // Theme toggle button
           Obx(
             () => IconButton(

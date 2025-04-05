@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:instapro/app_pages.dart';
+import 'package:instapro/auth_controller.dart';
+import 'package:instapro/login_prompt.dart';
 import 'package:instapro/storage_service.dart';
 import 'package:instapro/theme_service.dart';
 
@@ -8,11 +10,11 @@ class HomeController extends GetxController {
   // Services
   final _storageService = Get.find<StorageService>();
   final _themeService = Get.find<ThemeService>();
+  final _authController = Get.find<AuthController>();
 
   // Observable properties
   final isPremium = false.obs;
   final remainingGridUses = 0.obs;
-  // We'll just use a fixed value instead of storing it
   final remainingCarouselUses = 3.obs; // Fixed number of carousel uses
   final isDarkMode = false.obs;
 
@@ -38,6 +40,13 @@ class HomeController extends GetxController {
 
   // Navigation methods
   void navigateToGridMaker() {
+    // Check authentication first
+    if (!_authController.isLoggedIn.value) {
+      LoginPrompt.show(Get.context!);
+      return;
+    }
+
+    // Then check premium/usage limits
     if (!isPremium.value && remainingGridUses.value <= 0) {
       // Show upgrade prompt
       Get.defaultDialog(
@@ -60,6 +69,13 @@ class HomeController extends GetxController {
   }
 
   void navigateToCarouselMaker() {
+    // Check authentication first
+    if (!_authController.isLoggedIn.value) {
+      LoginPrompt.show(Get.context!);
+      return;
+    }
+
+    // Then check premium/usage limits
     if (!isPremium.value && remainingCarouselUses.value <= 0) {
       // Show upgrade prompt
       Get.defaultDialog(
@@ -83,6 +99,12 @@ class HomeController extends GetxController {
 
   // Navigate to Free Tools
   void navigateToFreeTools() {
+    // Free tools might still require login for tracking usage
+    if (!_authController.isLoggedIn.value) {
+      LoginPrompt.show(Get.context!);
+      return;
+    }
+
     Get.toNamed(Routes.FREE_TOOLS);
   }
 
